@@ -70,14 +70,14 @@ Qo'shimcha: `sitemap.xml`, `robots.txt`, Organization JSON-LD, og-image, favicon
 |---|---|
 | Hero: aniq rasm, o'qiladigan sarlavha | Sarlavha oq fonda navy rangda (11:1 kontrast), surat yonida, sarlavha ostida emas. Rasm 1280px gacha, xira emas |
 | Bitta sarlavha, oraliq, karta va tugma tizimi; legal ham brend shriftida | Bitta tokenlar to'plami (`global.css`), bitta radius, bitta tugma, 4 kulrang. Privacy va Terms ham Saira/Public Sans'da |
-| Telefon: katta raqamlar kartaga sig'adi, Partners logolari 2 ustunda, 1024px'da "Why Us" bir qatorda | 320–1440px'da 77 sahifa-kenglik tekshiruvi toza: raqamlar sig'adi, logolar telefonda 2 ustun, 1024px'da menyu bir qatorda |
+| Telefon: katta raqamlar kartaga sig'adi, Partners logolari 2 ustunda, 1024px'da "Why Us" bir qatorda | Jonli preview'da 10 sahifa × 7 kenglik (320–1440px) = 70 tekshiruv toza: raqamlar sig'adi, logolar telefonda 2 ustun, 1024px'da menyu bir qatorda, tugmalar 44px+ |
 | Kontakt ma'lumotlari hamma joyda bir xil | Hamma sahifa (Privacy va Terms ham) bitta joydan oladi: `src/data/site.ts`. Hozir (636) 442-1334 va info@. To'g'risini rahbar tasdiqlaydi |
 | "Apply Now", "Join Our Team", hero tugmalari Tenstreet'ga | Hamma "Apply" tugmalari `intelliapp.driverapponline.com/c/2415900?r=Noza` ga (avtomatik tekshirildi). Telefonda pastda doimiy "Apply now / Call us" paneli |
 | Test yozuvlar yo'q, sharhlar takrorlanmaydi, reyting bir xil | "Test Partner Co" va "Test Reviewer" olib tashlandi, 2 ta takror sharh birlashtirildi. Reyting va son ko'rsatilgan sharhlardan hisoblanadi: 4.8, 18 ta sharh (hamma joyda bir xil). "100% would recommend" olib tashlandi |
 | Buzilgan havolalar yo'q, `<p>` kodi ko'rinmaydi | /about'ga havola yo'q; xizmat sahifalari oddiy matn |
 | Takrorlanuvchi bloklar olib tashlanadi | "Drivers First, Always" bir marta; to'rtinchi ustun (u takror edi) olib tashlandi; statistika har sahifada bir marta |
 | Contact formasi holatlari | Yuborilmoqda (spinner), xato, yuborildi (faqat 2xx javobdan keyin). Ko'rish: `?state=error`, `?state=sending` |
-| PageSpeed telefonda kamida 90 | Lighthouse 13.6, telefon, lokal build: Home 99 (LCP 2.0 s), boshqa sahifalar 100. Jonli natija pastda |
+| PageSpeed telefonda kamida 90 | Jonli preview, PageSpeed Insights: Home telefonda 100 (LCP 1.4 s), kompyuterda 100; Contact telefonda 100 (LCP 0.8 s) |
 
 ## Forma API (dasturchi uchun)
 
@@ -97,5 +97,7 @@ Eng oson yo'l: GHL "Inbound webhook" yoki o'z API'ngizdagi bitta endpoint. API b
 
 ## Tezlik
 
+GitHub Pages preview, PageSpeed Insights (2026-11-14): Home telefonda **100** (FCP 0.9 s, LCP 1.4 s, TBT 0 ms, CLS 0.002), kompyuterda **100**; Contact telefonda **100** (LCP 0.8 s).
+Preview'da SEO 66 faqat noindex sababli (ataylab); asosiy domenda `PUBLIC_NOINDEX` bo'sh qoldiriladi.
 Lighthouse 13.6 (lokal build, telefon, 2026-11-14): Home 99 (LCP 2.0 s, CLS 0); Why Us, Services, Partners, Reviews, Contact 100. Accessibility, Best Practices, SEO hamma joyda 100.
 Hozirgi sayt: bosh sahifa 69–75, Contact 42.
