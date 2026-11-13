@@ -1,0 +1,9 @@
+---
+import Icon from './Icon.astro';
+interface Props { rating: number }
+const { rating } = Astro.props;
+const full = Math.round(rating);
+---
+<span class="stars" role="img" aria-label={`${rating} out of 5 stars`}>
+  {[1, 2, 3, 4, 5].map((n) => <Icon name="star" class={n <= full ? 'icon' : 'icon off'} />)}
+</span>

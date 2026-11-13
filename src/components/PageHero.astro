@@ -1,0 +1,31 @@
+---
+// Inner page header: breadcrumb, one h1, a lead and (optionally) a sharp photo beside it; the lane rule closes it.
+import Photo from './Photo.astro';
+import { url } from '../lib/url';
+
+interface Props {
+  title: string;
+  lead?: string;
+  photo?: string;
+  photoAlt?: string;
+  crumbs?: { label: string; href?: string }[];
+}
+const { title, lead, photo, photoAlt = '', crumbs = [] } = Astro.props;
+const trail = [{ label: 'Home', href: '/' }, ...crumbs];
+---
+<section class="page-hero">
+  <div class="wrap">
+    <div class={photo ? 'page-hero__grid page-hero__grid--photo' : 'page-hero__grid'}>
+      <div class="page-hero__copy">
+        <ol class="crumbs" aria-label="Breadcrumb">
+          {trail.map((c) => <li>{c.href ? <a href={url(c.href)}>{c.label}</a> : <span aria-current="page">{c.label}</span>}</li>)}
+        </ol>
+        <h1>{title}</h1>
+        {lead && <p class="lead">{lead}</p>}
+        <slot />
+      </div>
+      {photo && <Photo name={photo} alt={photoAlt} widths={[480, 800]} sizes="(min-width: 900px) 460px, 100vw" eager />}
+    </div>
+    <div class="lanes" aria-hidden="true"></div>
+  </div>
+</section>

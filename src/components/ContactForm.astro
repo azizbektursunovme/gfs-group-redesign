@@ -1,0 +1,100 @@
+---
+// Contact form. Same questions and field keys as the live GoHighLevel form (position_type, first_name,
+// last_name, phone, email, postal_code, cdl, cdl_experience), plus an optional message, so the backend can
+// map it 1:1. The two SMS consent checkboxes keep the live wording word for word (A2P 10DLC); both are
+// optional and unchecked. Sends JSON to PUBLIC_CONTACT_ENDPOINT through LeadForm; empty = preview mode.
+// ?as=driver | owner | partner preselects "I am a".
+import LeadForm from './LeadForm.astro';
+import { url } from '../lib/url';
+
+const endpoint = import.meta.env.PUBLIC_CONTACT_ENDPOINT ?? '';
+const positions = [
+  { v: 'Company driver', k: 'driver' },
+  { v: 'Owner-operator', k: 'owner' },
+  { v: 'Fleet partner', k: 'partner' },
+  { v: 'Shipper or broker', k: 'shipper' },
+  { v: 'Something else', k: 'other' },
+];
+---
+<LeadForm
+  id="contact-form"
+  title="Contact form"
+  endpoint={endpoint}
+  source="website-contact"
+  submitLabel="Send message"
+  sendingLabel="Sending message…"
+  successTitle="Message sent"
+  successText="Thank you. A GFS recruiter or partner manager will get back to you during business hours."
+>
+  <fieldset>
+    <legend>Send us a message</legend>
+    <p class="hint">Drivers: the fastest way in is the <a href="https://intelliapp.driverapponline.com/c/2415900?r=Noza" target="_blank" rel="noopener">Tenstreet application</a>. Questions first? Write here.</p>
+    <div class="form-grid form-grid--2">
+      <div class="field span-2">
+        <label class="label" for="c-position">I am a</label>
+        <select class="input" id="c-position" name="position_type" required data-msg="Choose what describes you best." aria-describedby="c-position-err">
+          <option value="">Choose one</option>
+          {positions.map((p) => <option value={p.v} data-key={p.k}>{p.v}</option>)}
+        </select>
+        <p class="field-error" id="c-position-err"></p>
+      </div>
+      <div class="field">
+        <label class="label" for="c-first">First name</label>
+        <input class="input" id="c-first" name="first_name" autocomplete="given-name" required data-msg="Enter your first name." aria-describedby="c-first-err" />
+        <p class="field-error" id="c-first-err"></p>
+      </div>
+      <div class="field">
+        <label class="label" for="c-last">Last name</label>
+        <input class="input" id="c-last" name="last_name" autocomplete="family-name" required data-msg="Enter your last name." aria-describedby="c-last-err" />
+        <p class="field-error" id="c-last-err"></p>
+      </div>
+      <div class="field">
+        <label class="label" for="c-phone">Phone</label>
+        <input class="input" id="c-phone" name="phone" type="tel" autocomplete="tel" required pattern="[0-9()+.\s-]{10,20}" placeholder="(636) 555-0100" data-msg="Enter a phone number with area code." aria-describedby="c-phone-err" />
+        <p class="field-error" id="c-phone-err"></p>
+      </div>
+      <div class="field">
+        <label class="label" for="c-email">Email</label>
+        <input class="input" id="c-email" name="email" type="email" autocomplete="email" required placeholder="name@example.com" data-msg="Enter an email address like name@example.com." aria-describedby="c-email-err" />
+        <p class="field-error" id="c-email-err"></p>
+      </div>
+      <div class="field">
+        <label class="label" for="c-zip">ZIP code <span class="opt">Optional</span></label>
+        <input class="input" id="c-zip" name="postal_code" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" data-msg="Enter a 5-digit ZIP code, or leave it empty." aria-describedby="c-zip-err" />
+        <p class="field-error" id="c-zip-err"></p>
+      </div>
+      <div class="field">
+        <label class="label" for="c-cdl">Valid Class A CDL? <span class="opt">Drivers</span></label>
+        <select class="input" id="c-cdl" name="cdl">
+          <option value="">Choose</option>
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+      </div>
+      <div class="field span-2">
+        <label class="label" for="c-exp">Over-the-road experience <span class="opt">Drivers</span></label>
+        <select class="input" id="c-exp" name="cdl_experience">
+          <option value="">Choose</option>
+          <option>Less than 1 year</option>
+          <option>1–2 years</option>
+          <option>More than 2 years</option>
+        </select>
+      </div>
+      <div class="field span-2">
+        <label class="label" for="c-message">Message <span class="opt">Optional</span></label>
+        <textarea class="input" id="c-message" name="message" rows="3"></textarea>
+      </div>
+    </div>
+    <div class="consents">
+      <label class="consent"><input type="checkbox" name="sms_non_marketing" value="yes" /><span>By checking this box, I consent to receive non-marketing SMS/text messages from GFS GROUP LLC regarding my driver application, recruiting updates, interview scheduling, qualification follow-ups, document reminders, onboarding reminders, support replies, and other job opportunity-related notifications. Message frequency may vary. Message and data rates may apply. Reply HELP for help and STOP to opt out at any time. See our <a href={url('privacy-policy/')}>Privacy Policy</a> and <a href={url('terms-of-service/')}>Terms of Service</a> for more information.</span></label>
+      <label class="consent"><input type="checkbox" name="sms_marketing" value="yes" /><span>By checking this box, I consent to receive marketing SMS/text messages from GFS GROUP LLC regarding company news, announcements, recruiting campaigns, promotional updates, and special offers. Message frequency may vary. Message and data rates may apply. Reply HELP for help and STOP to opt out at any time. See our <a href={url('privacy-policy/')}>Privacy Policy</a> and <a href={url('terms-of-service/')}>Terms of Service</a> for more information.</span></label>
+    </div>
+  </fieldset>
+</LeadForm>
+
+<script>
+  const as = new URLSearchParams(location.search).get('as');
+  const select = document.querySelector<HTMLSelectElement>('#c-position');
+  const match = as && select ? Array.from(select.options).find((o) => o.dataset.key === as) : undefined;
+  if (select && match) select.value = match.value;
+</script>

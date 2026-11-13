@@ -1,0 +1,68 @@
+---
+// Privacy Policy and Terms of Service, rendered from the CMS text (data/legal.ts) in the brand fonts.
+// The text is unchanged except the contact details: the old pages listed +1-314-451-1111 and hr@, the rest of
+// the site (636) 442-1334 and info@. Until the manager confirms one set, every page shows company.phone/email.
+import Base from '../layouts/Base.astro';
+import PageHero from './PageHero.astro';
+import { company } from '../data/site';
+import { legal } from '../data/legal';
+import { photoCredits } from '../data/credits';
+
+interface Props { doc: 'privacy' | 'terms'; title: string; description: string }
+const { doc, title, description } = Astro.props;
+const page = legal[doc];
+const contactFix = (t: string) =>
+  t.replaceAll('hr@gfs-groupllc.com', company.email).replaceAll('+1-314-451-1111', `+1 ${company.phone}`).replace('13690 RIVERPORT DR STE 210, MARYLAND HEIGHTS, MO 63043', '13690 Riverport Dr Ste 210, Maryland Heights, MO 63043');
+
+// "- item" lines become lists, blank lines split paragraphs.
+type Block = { kind: 'p'; text: string } | { kind: 'ul'; items: string[] };
+const blocks = (content: string): Block[] => {
+  const out: Block[] = [];
+  for (const chunk of contactFix(content).split(/\n\s*\n/)) {
+    const lines = chunk.split('\n').map((l) => l.trim()).filter(Boolean);
+    let para: string[] = [];
+    for (const l of lines) {
+      if (l.startsWith('- ')) {
+        if (para.length) { out.push({ kind: 'p', text: para.join(' ') }); para = []; }
+        const last = out[out.length - 1];
+        if (last && last.kind === 'ul') last.items.push(l.slice(2)); else out.push({ kind: 'ul', items: [l.slice(2)] });
+      } else para.push(l);
+    }
+    if (para.length) out.push({ kind: 'p', text: para.join(' ') });
+  }
+  return out;
+};
+const paragraphs = (text: string) => text.split(/\n(?=[A-Z])/);
+---
+<Base title={`${title} | ${company.legalName}`} description={description} current="legal">
+  <PageHero title={title} crumbs={[{ label: title }]} />
+  <section class="section">
+    <div class="wrap">
+      <article class="legal">
+        <p class="updated">Last updated {page.updated}</p>
+        <p>{contactFix(page.intro)}</p>
+        {page.sections.map((s) => (
+          <>
+            <h2>{s.title}</h2>
+            {blocks(s.content).map((b) => b.kind === 'ul'
+              ? <ul>{b.items.map((i) => <li>{i}</li>)}</ul>
+              : b.text.includes('GFS GROUP LLC Email:')
+                ? <p>{paragraphs(b.text.replace(/ (Email|Phone|Address|Website):/g, '\n$1:')).map((line, i) => <>{i > 0 && <br />}{line}</>)}</p>
+                : <p>{b.text}</p>)}
+          </>
+        ))}
+        {doc === 'terms' && (
+          <>
+            <h2 id="photo-credits">Photo credits</h2>
+            <p class="credits">Temporary photos used on this preview, from Wikimedia Commons:</p>
+            <ul class="credits">
+              {photoCredits.map((c) => (
+                <li>{c.where}: <a href={c.source} target="_blank" rel="noopener">{c.title}</a> by {c.author}, {c.licenseUrl ? <a href={c.licenseUrl} target="_blank" rel="noopener">{c.license}</a> : c.license}</li>
+              ))}
+            </ul>
+          </>
+        )}
+      </article>
+    </div>
+  </section>
+</Base>

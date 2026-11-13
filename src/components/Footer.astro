@@ -1,0 +1,60 @@
+---
+import Icon from './Icon.astro';
+import { company, fullAddress, hoursText, links, social } from '../data/site';
+import { ratingText } from '../data/reviews';
+import { url } from '../lib/url';
+
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="lanes lanes--light" aria-hidden="true"></div>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href={url('/')} aria-label={`${company.legalName}, home`}>
+          <img src={url('brand/logo-white-96.png')} srcset={`${url('brand/logo-white-96.png')} 1x, ${url('brand/logo-white-192.png')} 2x`} width="213" height="96" alt="GFS GROUP LLC" loading="lazy" />
+        </a>
+        <p>Driver recruiting and logistics partner connecting CDL drivers, owner-operators and fleet partners nationwide.</p>
+        <p>Rated {ratingText}.</p>
+        <ul class="social">
+          {social.map((s) => <li><a href={s.url} target="_blank" rel="noopener" aria-label={`${company.name} on ${s.name}`}><Icon name={s.icon} /></a></li>)}
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>Company</h2>
+        <ul>
+          <li><a href={url('why-us/')}>Why Us</a></li>
+          <li><a href={url('partners/')}>Partners</a></li>
+          <li><a href={url('reviews/')}>Reviews</a></li>
+          <li><a href={url('contact-us/')}>Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>Services</h2>
+        <ul>
+          <li><a href={links.apply} target="_blank" rel="noopener">CDL driver recruiting</a></li>
+          <li><a href={url('services/#programs')}>Owner-operator programs</a></li>
+          <li><a href={url('partners/')}>Fleet partnerships</a></li>
+          <li><a href={url('services/trucking-services/')}>Trucking services</a></li>
+          <li><a href={url('services/logistics-solutions/')}>Logistics solutions</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h2>Contact</h2>
+        <ul>
+          <li><Icon name="phone" /><a href={company.phoneHref}>{company.phone}</a></li>
+          <li><Icon name="mail" /><a href={`mailto:${company.email}`}>{company.email}</a></li>
+          <li><Icon name="pin" /><a href={links.maps} target="_blank" rel="noopener">{fullAddress}</a></li>
+          <li><Icon name="clock" /><span>{hoursText}</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© {year} {company.legalName}. All rights reserved.</p>
+      <ul>
+        <li><a href={url('privacy-policy/')}>Privacy Policy</a></li>
+        <li><a href={url('terms-of-service/')}>Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,29 @@
+---
+// Closing band from the CMS footer CTA ("Ready to Hit the Road with GFS Group?"). The button now opens the
+// Tenstreet application instead of the contact page.
+import Icon from './Icon.astro';
+import { company, links } from '../data/site';
+interface Props { title?: string; text?: string; primary?: { label: string; href: string } }
+const {
+  title = 'Ready to hit the road with GFS Group?',
+  text = 'Join a team that puts drivers first: competitive pay, steady miles and real support.',
+  primary,
+} = Astro.props;
+---
+<section class="cta on-dark" aria-labelledby="cta-title">
+  <div class="wrap">
+    <div class="lanes lanes--light" aria-hidden="true"></div>
+    <div class="cta__inner">
+      <div>
+        <h2 id="cta-title">{title}</h2>
+        <p>{text}</p>
+      </div>
+      <div class="btn-row">
+        {primary
+          ? <a class="btn btn--lg" href={primary.href}>{primary.label}</a>
+          : <a class="btn btn--lg" href={links.apply} target="_blank" rel="noopener">Apply on Tenstreet <Icon name="external" /></a>}
+        <a class="btn btn--line btn--lg" href={company.phoneHref}>Call {company.phone}</a>
+      </div>
+    </div>
+  </div>
+</section>

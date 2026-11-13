@@ -1,0 +1,101 @@
+---
+// Partners: one partner count everywhere (the number of partners actually listed), no "Test Partner Co",
+// logos on one canvas size, two per row on phones.
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { company, partnerBenefits, partnerSteps, partnerRequirements } from '../data/site';
+import { partners } from '../data/partners';
+import { url } from '../lib/url';
+
+const groups = [
+  { title: 'Brokers', list: partners.filter((p) => p.type === 'broker') },
+  { title: 'Carriers', list: partners.filter((p) => p.type === 'carrier') },
+];
+---
+<Base
+  title={`Partners | ${company.legalName}`}
+  description={`Brokers and carriers in the GFS Group network: ${partners.length} partners across 48 states. Bring your fleet into our network.`}
+  current="partners"
+>
+  <PageHero
+    title="Our partners"
+    lead="We work with trusted names in North American logistics, which gives our drivers access to good loads, lanes and quick pay."
+    photo="path-partners"
+    crumbs={[{ label: 'Partners' }]}
+  >
+    <div class="btn-row">
+      <a class="btn btn--lg" href={url('contact-us/?as=partner#contact-form')}>Become a partner</a>
+      <a class="btn btn--line btn--lg" href="#network">See the network</a>
+    </div>
+  </PageHero>
+
+  <section class="section section--tight" aria-label="Partner network in numbers">
+    <div class="wrap">
+      <ul class="stats">
+        <li><strong>{partners.length}</strong><span>Partners listed</span><small>Brokers and carriers below</small></li>
+        <li><strong>48</strong><span>States served</span><small>The full contiguous US network</small></li>
+        <li><strong>1M+</strong><span>Miles covered</span><small>A track record of delivery</small></li>
+        <li><strong>48 h</strong><span>Partner review</span><small>From application to answer</small></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--grey" aria-labelledby="benefits-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="benefits-title">Why partner with GFS</h2>
+      </div>
+      <ul class="features features--3">
+        {partnerBenefits.map((b) => <li class="feature"><span class="icon-box"><Icon name={b.icon} /></span><h3>{b.title}</h3><p>{b.body}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="steps-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="steps-title">How to become a partner</h2>
+        <p>Four steps from first form to first load.</p>
+      </div>
+      <ol class="steps">
+        {partnerSteps.map((s) => <li class="step-item"><h3>{s.title}</h3><p>{s.body}</p></li>)}
+      </ol>
+      <div class="btn-row" style="margin-top: 32px">
+        <a class="btn" href={url('contact-us/?as=partner#contact-form')}>Start your partner application</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--grey" aria-labelledby="req-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="req-title">What you need to get started</h2>
+        <p>We keep the bar high to protect our carriers, our shippers and the freight we move.</p>
+      </div>
+      <ul class="cards cards--4">
+        {partnerRequirements.map((r) => <li class="card"><span class="icon-box"><Icon name="check" /></span><h3>{r.title}</h3><p>{r.body}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="network" aria-labelledby="network-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="network-title">The network</h2>
+        <p>{partners.length} brokers and carriers we work with.</p>
+      </div>
+      {groups.map((g) => (
+        <div class="wall-group">
+          <h3>{g.title} <span class="muted" style="font-weight:400">({g.list.length})</span></h3>
+          <ul class="logo-wall">
+            {g.list.map((p) => <li>{p.logo ? <img src={url(`partners/${p.logo}.webp`)} width="320" height="120" alt={p.name} loading="lazy" decoding="async" /> : <span class="name-only">{p.name}</span>}</li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <CtaBand title="Looking for new partnerships" text="We are always looking for partners who bring real value to our driver network." primary={{ label: 'Get in touch', href: url('contact-us/?as=partner#contact-form') }} />
+</Base>

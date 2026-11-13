@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { company, links } from '../data/site';
+import { url } from '../lib/url';
+---
+<Base title={`Page not found | ${company.legalName}`} description="This page does not exist." noindex>
+  <section class="section notfound">
+    <div class="wrap">
+      <div class="lanes lanes--short" aria-hidden="true"></div>
+      <h1>Wrong exit.</h1>
+      <p class="lead">This page does not exist or has moved. Head back home, or call us at <a href={company.phoneHref}>{company.phone}</a>.</p>
+      <div class="btn-row">
+        <a class="btn" href={url('/')}>Go to the home page</a>
+        <a class="btn btn--line" href={links.apply} target="_blank" rel="noopener">Apply on Tenstreet <Icon name="external" /></a>
+      </div>
+    </div>
+  </section>
+</Base>

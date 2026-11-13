@@ -1,0 +1,66 @@
+---
+// Sticky white header: logo, the five pages, phone (wide screens) and "Apply now" (Tenstreet) everywhere.
+// At 1024px the menu fits on one line; below it a menu button opens a panel. Escape closes the panel.
+import Icon from './Icon.astro';
+import { company, links } from '../data/site';
+import { url } from '../lib/url';
+
+interface Props { current: string }
+const { current } = Astro.props;
+const items = [
+  { key: 'why', label: 'Why Us', href: url('why-us/') },
+  { key: 'services', label: 'Services', href: url('services/') },
+  { key: 'partners', label: 'Partners', href: url('partners/') },
+  { key: 'reviews', label: 'Reviews', href: url('reviews/') },
+  { key: 'contact', label: 'Contact', href: url('contact-us/') },
+];
+---
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="brand" href={url('/')} aria-label={`${company.legalName}, home`}>
+      <img src={url('brand/logo-96.png')} srcset={`${url('brand/logo-96.png')} 1x, ${url('brand/logo-192.png')} 2x`} width="213" height="96" alt="GFS GROUP LLC" />
+    </a>
+    <nav class="nav" aria-label="Main">
+      <ul>
+        {items.map((i) => <li><a href={i.href} aria-current={current === i.key ? 'page' : undefined}>{i.label}</a></li>)}
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="header-phone" href={company.phoneHref}><Icon name="phone" />{company.phone}</a>
+      <a class="btn" href={links.apply} target="_blank" rel="noopener">Apply now</a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-panel">
+        <span class="sr-only">Menu</span>
+        <span data-open><Icon name="menu" /></span>
+        <span data-close><Icon name="close" /></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-panel" id="nav-panel" hidden>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href={url('/')} aria-current={current === 'home' ? 'page' : undefined}>Home <Icon name="chevron" /></a></li>
+        {items.map((i) => <li><a href={i.href} aria-current={current === i.key ? 'page' : undefined}>{i.label} <Icon name="chevron" /></a></li>)}
+      </ul>
+    </nav>
+    <div class="btn-row">
+      <a class="btn" href={links.apply} target="_blank" rel="noopener">Apply on Tenstreet</a>
+      <a class="btn btn--line" href={company.phoneHref}>Call {company.phone}</a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+  const panel = document.getElementById('nav-panel');
+  if (toggle && panel) {
+    const set = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+    };
+    toggle.addEventListener('click', () => set(panel.hidden));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) { set(false); toggle.focus(); }
+    });
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => { if (e.matches) set(false); });
+  }
+</script>

@@ -1,0 +1,79 @@
+---
+// Reviews: the average, the count and the star breakdown are computed from the reviews shown, so they can
+// never disagree again (the live page said 4.8 here, 4.9 in the footer and "250+ reviews" for 21).
+// Filter tabs work without a reload; with JS off every review is visible.
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ReviewCard from '../components/ReviewCard.astro';
+import Stars from '../components/Stars.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { company } from '../data/site';
+import { reviews, reviewCount, ratingAverage } from '../data/reviews';
+import { url } from '../lib/url';
+
+const dist = [5, 4, 3, 2, 1].map((n) => ({ n, count: reviews.filter((r) => r.rating === n).length }));
+const tabs = [
+  { key: 'all', label: 'All', count: reviewCount },
+  { key: 'drivers', label: 'Drivers', count: reviews.filter((r) => r.group === 'drivers').length },
+  { key: 'owners', label: 'Owner-operators', count: reviews.filter((r) => r.group === 'owners').length },
+  { key: 'partners', label: 'Partners', count: reviews.filter((r) => r.group === 'partners').length },
+];
+---
+<Base
+  title={`Reviews | ${company.legalName}`}
+  description={`${ratingAverage.toFixed(1)} out of 5 from ${reviewCount} reviews by drivers, owner-operators and partners of GFS Group.`}
+  current="reviews"
+>
+  <PageHero title="Voices from the GFS family" lead="From first-week drivers to multi-year partners: what the people who work with us every day have to say." crumbs={[{ label: 'Reviews' }]} />
+
+  <section class="section section--tight" aria-labelledby="summary-title">
+    <div class="wrap">
+      <h2 id="summary-title" class="sr-only">Rating summary</h2>
+      <div class="rating-summary">
+        <div class="rating-big">
+          <strong>{ratingAverage.toFixed(1)}</strong>
+          <Stars rating={ratingAverage} />
+          <span class="muted">{reviewCount} reviews</span>
+        </div>
+        <ul class="dist" aria-label="Reviews by star rating">
+          {dist.map((d) => (
+            <li>
+              <span>{d.n} stars</span>
+              <span class="bar__track" aria-hidden="true"><span style={`width:${Math.round((d.count / reviewCount) * 100)}%`}></span></span>
+              <span>{d.count}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <p class="hint" style="margin-top: 12px">We never pay for reviews, and we answer every one, positive or critical.</p>
+    </div>
+  </section>
+
+  <section class="section section--grey" aria-labelledby="list-title">
+    <div class="wrap">
+      <h2 id="list-title" class="sr-only">All reviews</h2>
+      <div class="tabs" role="group" aria-label="Show reviews from">
+        {tabs.map((t, i) => <button class="tab" type="button" data-filter={t.key} aria-pressed={i === 0 ? 'true' : 'false'}>{t.label} <span>{t.count}</span></button>)}
+      </div>
+      <p class="sr-only" aria-live="polite" data-role="count"></p>
+      <ul class="reviews" data-role="list">
+        {reviews.map((r) => <ReviewCard review={r} />)}
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand title="Part of the GFS family?" text="Your story helps other drivers find a company they can trust. Tell us how it is going." primary={{ label: 'Share your story', href: url('contact-us/#contact-form') }} />
+</Base>
+
+<script>
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.tab[data-filter]'));
+  const items = Array.from(document.querySelectorAll<HTMLElement>('[data-role="list"] > .review'));
+  const live = document.querySelector<HTMLElement>('[data-role="count"]');
+  buttons.forEach((b) => b.addEventListener('click', () => {
+    const f = b.dataset.filter;
+    buttons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    let shown = 0;
+    items.forEach((i) => { const on = f === 'all' || i.dataset.group === f; i.hidden = !on; if (on) shown++; });
+    if (live) live.textContent = `Showing ${shown} reviews`;
+  }));
+</script>

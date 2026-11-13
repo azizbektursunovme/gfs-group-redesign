@@ -1,0 +1,65 @@
+---
+// Services: its own h1 (the live page reused "Why Choose GFS GROUP LLC?"), the four programs from the old
+// footer, and the two operations services with working links (the old "Learn More" went to /about, a 404).
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import Photo from '../../components/Photo.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { company, programs, services } from '../../data/site';
+import { url } from '../../lib/url';
+---
+<Base
+  title={`Services | ${company.legalName}`}
+  description="CDL driver recruiting, owner-operator programs, fleet partnerships, trucking services and logistics solutions from GFS Group in the St. Louis area."
+  current="services"
+>
+  <PageHero
+    title="Services"
+    lead="Recruiting for drivers, programs for owner-operators, a network for fleets, and trucking and logistics for the freight itself."
+    crumbs={[{ label: 'Services' }]}
+  />
+
+  <section class="section" id="programs" aria-labelledby="programs-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="programs-title">For drivers and fleets</h2>
+        <p>Pick the program that fits where you are today.</p>
+      </div>
+      <ul class="cards cards--4">
+        {programs.map((p) => (
+          <li class="card">
+            <span class="icon-box"><Icon name={p.icon} /></span>
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+            <a class="text-link" href={p.external ? p.href : url(p.href)} target={p.external ? '_blank' : undefined} rel={p.external ? 'noopener' : undefined}>{p.cta} <Icon name={p.external ? 'external' : 'chevron'} /></a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--grey" aria-labelledby="ops-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="ops-title">For shippers and brokers</h2>
+        <p>Freight moved by our own drivers and planned by our own team.</p>
+      </div>
+      <ul class="cards cards--2">
+        {services.map((s) => (
+          <li class="card card--photo">
+            <Photo name={s.photo} alt="" sizes="(min-width: 700px) 50vw, 100vw" />
+            <div class="card__body">
+              <h3>{s.title}</h3>
+              <p>{s.lead}</p>
+              <ul class="checks">{s.included.map((i) => <li>{i}</li>)}</ul>
+              <a class="text-link" href={url(`services/${s.slug}/`)}>About {s.title.toLowerCase()} <Icon name="chevron" /></a>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>

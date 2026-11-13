@@ -1,0 +1,39 @@
+---
+// Contact details beside the form. The same phone, email and address appear here, in the footer and in
+// the legal pages. The empty anchor keeps old links to /contact-us#inline-bQz7IIiAOwL2rSPfubC0 working.
+import Icon from './Icon.astro';
+import ContactForm from './ContactForm.astro';
+import Photo from './Photo.astro';
+import { company, fullAddress, hours, links } from '../data/site';
+
+interface Props { heading?: string; text?: string; level?: 'h1' | 'h2'; photo?: boolean }
+const {
+  heading = 'Talk to GFS Group',
+  text = 'Questions about driving, partnership or our logistics services? Call, write or send the form, and the GFS team will get back to you.',
+  photo = false,
+} = Astro.props;
+---
+<div class="wrap contact-grid">
+  <div class="contact-info">
+    <div class="section-head" style="margin-bottom: 0">
+      <h2>{heading}</h2>
+      <p>{text}</p>
+    </div>
+    <dl class="contact-list">
+      <div><Icon name="phone" /><dt>Phone</dt><dd><a href={company.phoneHref}>{company.phone}</a></dd></div>
+      <div><Icon name="mail" /><dt>Email</dt><dd><a href={`mailto:${company.email}`}>{company.email}</a></dd></div>
+      <div><Icon name="pin" /><dt>Office</dt><dd><a href={links.maps} target="_blank" rel="noopener">{fullAddress}</a></dd></div>
+      <div><Icon name="clock" /><dt>Business hours</dt><dd>{hours.map((h) => <span style="display:block">{h.days}: {h.time}</span>)}</dd></div>
+    </dl>
+    {photo && (
+      <figure class="contact-photo">
+        <Photo name="office-stl" alt="Interstate signs for I-64, I-70 and I-55 into St. Louis" sizes="(min-width: 1000px) 480px, 100vw" />
+        <figcaption>Our office is in Maryland Heights, Missouri, in the St. Louis area.</figcaption>
+      </figure>
+    )}
+  </div>
+  <div>
+    <span id="inline-bQz7IIiAOwL2rSPfubC0"></span>
+    <ContactForm />
+  </div>
+</div>

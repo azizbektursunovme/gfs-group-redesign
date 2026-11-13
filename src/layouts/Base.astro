@@ -1,0 +1,82 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { company, links, social } from '../data/site';
+import { ORIGIN } from '../lib/seo';
+import { url } from '../lib/url';
+
+type Preload = { srcset: string; sizes: string; media?: string };
+interface Props {
+  title: string;
+  description: string;
+  current?: 'home' | 'why' | 'services' | 'partners' | 'reviews' | 'contact' | 'legal' | 'other';
+  noindex?: boolean;
+  preload?: Preload[];
+}
+const { title, description, current = 'other', noindex = false, preload = [] } = Astro.props;
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const path = Astro.url.pathname.startsWith(base) ? Astro.url.pathname.slice(base.length) : Astro.url.pathname;
+const canonical = `${ORIGIN}${path === '' ? '/' : path}`;
+const hideFromSearch = noindex || import.meta.env.PUBLIC_NOINDEX === 'true';
+const font = (f: string) => url(`fonts/${f}.woff2`);
+const fontFaces = `
+@font-face{font-family:'Public Sans';src:url(${font('public-sans-latin-var')}) format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Saira Semi Condensed';src:url(${font('saira-semi-condensed-latin-700')}) format('woff2');font-weight:700;font-display:swap}`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: company.legalName,
+  url: ORIGIN,
+  logo: `${ORIGIN}/brand/icon-512.png`,
+  slogan: company.tagline,
+  telephone: '+1-636-442-1334',
+  email: company.email,
+  address: { '@type': 'PostalAddress', streetAddress: company.street, addressLocality: company.city, addressRegion: company.state, postalCode: company.zip, addressCountry: 'US' },
+  sameAs: social.map((s) => s.url),
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {hideFromSearch && <meta name="robots" content="noindex, nofollow" />}
+    {!noindex && <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#0b2142" />
+    <link rel="icon" href={url('brand/favicon-32.png')} sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href={url('brand/apple-touch-icon.png')} />
+    <link rel="preload" href={font('saira-semi-condensed-latin-700')} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={font('public-sans-latin-var')} as="font" type="font/woff2" crossorigin />
+    {preload.map((p) => (
+      <link rel="preload" as="image" imagesrcset={p.srcset} imagesizes={p.sizes} media={p.media} fetchpriority="high" />
+    ))}
+    <style is:inline set:html={fontFaces}></style>
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={company.legalName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {!noindex && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={`${ORIGIN}/brand/og-image.jpg`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header current={current} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <div class="mobile-bar" aria-label="Quick actions">
+      <a class="btn" href={links.apply} target="_blank" rel="noopener">Apply now</a>
+      <a class="btn btn--line" href={company.phoneHref}>Call us</a>
+    </div>
+  </body>
+</html>

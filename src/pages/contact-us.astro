@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ContactBlock from '../components/ContactBlock.astro';
+import { company, fullAddress } from '../data/site';
+---
+<Base
+  title={`Contact | ${company.legalName}`}
+  description={`Call ${company.phone}, email ${company.email} or visit ${fullAddress}. Mon–Fri 9 AM – 6 PM, Sat 9 AM – 3 PM Central.`}
+  current="contact"
+>
+  <PageHero
+    title="Contact GFS Group"
+    lead="Questions about driving, partnership or our logistics services? Reach out. The GFS team is here to help."
+    crumbs={[{ label: 'Contact' }]}
+  />
+  <section class="section" aria-label="Contact details and form">
+    <ContactBlock heading="We pick up" text="Call during business hours, write any time, or send the form and we will get back to you shortly." photo />
+  </section>
+</Base>

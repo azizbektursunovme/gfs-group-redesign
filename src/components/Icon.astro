@@ -1,0 +1,50 @@
+---
+// Simple 24px line icons drawn for this site (stroke = currentColor).
+interface Props { name: string; class?: string; label?: string }
+const { name, class: className = 'icon', label } = Astro.props;
+const paths: Record<string, string> = {
+  phone: 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z',
+  mail: 'M3 6h18v12H3z M3 7l9 6 9-6',
+  shield: 'M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z M8.5 12l2.5 2.5 4.5-5',
+  gps: 'M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z M12 12.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
+  pin: 'M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z M12 12.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
+  clock: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M12 7v5l3 2',
+  route: 'M6 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M18 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M8 17h7.5a3.5 3.5 0 0 0 0-7h-7a3.5 3.5 0 0 1 0-7H16',
+  truck: 'M2 6h11v10H2z M13 9h4.5l3.5 3.5V16h-8z M6.5 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M17 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+  pallet: 'M4 4h7v7H4z M13 4h7v7h-7z M4 11h16v4H4z M4 15v4 M12 15v4 M20 15v4',
+  bolt: 'M13 2L4 14h7l-1 8 9-12h-7z',
+  origin: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z',
+  weight: 'M6.5 8h11l2.5 12H4z M9 8a3 3 0 1 1 6 0',
+  box: 'M3 7.5L12 3l9 4.5v9L12 21l-9-4.5z M3 7.5l9 4.5 9-4.5 M12 12v9',
+  user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21a8 8 0 0 1 16 0',
+  building: 'M4 21V5l8-2v18 M12 9h8v12 M2 21h20 M8 8v.01 M8 12v.01 M8 16v.01 M16 13v.01 M16 17v.01',
+  note: 'M5 3h10l4 4v14H5z M15 3v4h4 M8 12h8 M8 16h6',
+  info: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M12 11v5 M12 8v.01',
+  check: 'M5 12.5l4.5 4.5L19 7',
+  sun: 'M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M12 2v2 M12 20v2 M4.9 4.9l1.4 1.4 M17.7 17.7l1.4 1.4 M2 12h2 M20 12h2 M4.9 19.1l1.4-1.4 M17.7 6.3l1.4-1.4',
+  moon: 'M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z',
+  snow: 'M12 3v18 M4.2 7.5l15.6 9 M4.2 16.5l15.6-9 M9.5 4.5 12 6l2.5-1.5 M9.5 19.5 12 18l2.5 1.5',
+  layers: 'M3 15h18 M6 15v3 M18 15v3 M4 11h16v4H4z M7 7h10v4H7z',
+  search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14z M20 20l-4-4',
+  key: 'M8 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M12 11h9 M18 11v3 M15 11v2',
+  dollar: 'M12 3v18 M16.5 7.5A3.5 3 0 0 0 13 5h-2a3 3 0 0 0 0 6h2a3 3 0 0 1 0 6h-2a3.5 3 0 0 1-3.5-2.5',
+  home: 'M3 11l9-7 9 7 M5 9.5V20h14V9.5 M10 20v-6h4v6',
+  calendar: 'M4 6h16v15H4z M4 10h16 M8 3v4 M16 3v4',
+  wrench: 'M14.5 6.5a4 4 0 0 0 5 5L21 13l-8 8-3-3 8-8-1.5-1.5 M4 20l6-6',
+  award: 'M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12z M8.5 14l-1.5 7 5-3 5 3-1.5-7',
+  users: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21a7 7 0 0 1 14 0 M16 3.5a4 4 0 0 1 0 7.5 M18 14a7 7 0 0 1 4 7',
+  star: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',
+  chevron: 'M9 6l6 6-6 6',
+  external: 'M14 4h6v6 M20 4l-9 9 M18 14v6H4V6h6',
+  map: 'M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z M9 4v14 M15 6v14',
+  instagram: 'M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4z M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M17.5 6.5v.01',
+  linkedin: 'M4 4h16v16H4z M8 11v5 M8 8v.01 M12 16v-5 M12 13.5a2.5 2.5 0 0 1 5 0V16',
+  facebook: 'M14 21v-8h3l.5-3.5H14V7.5c0-1 .4-1.8 1.8-1.8H18V2.6A20 20 0 0 0 15.3 2.4C12.6 2.4 10.6 4 10.6 7v2.5H7.5V13h3.1v8z',
+  menu: 'M4 7h16 M4 12h16 M4 17h16',
+  close: 'M6 6l12 12 M18 6L6 18',
+};
+const d = paths[name] ?? paths.truck;
+---
+<svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden={label ? undefined : 'true'} role={label ? 'img' : undefined} aria-label={label}>
+  <path d={d} />
+</svg>

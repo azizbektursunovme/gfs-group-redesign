@@ -1,0 +1,62 @@
+---
+// "Find your lane": the logo's bundle of lines comes down from the hero and splits into three paths.
+// The red line runs straight into Company drivers (the main audience); two navy lines branch left
+// to Owner-operators and two branch right to Fleet partners. Desktop draws it once on load; phones
+// get a simple trunk with a branch into each card (CSS). The cards are the real content.
+import Photo from './Photo.astro';
+import Icon from './Icon.astro';
+import { paths } from '../data/site';
+import { url } from '../lib/url';
+
+// Offset a polyline with 45° turns by `d` along its left-hand normal (miter joins), so parallel lines keep their spacing.
+type Pt = [number, number];
+function offset(pts: Pt[], d: number, side: 1 | -1): Pt[] {
+  const dirs = pts.slice(1).map((p, i) => {
+    const dx = p[0] - pts[i][0], dy = p[1] - pts[i][1]; const l = Math.hypot(dx, dy);
+    return [dx / l, dy / l] as Pt;
+  });
+  const normals = dirs.map(([x, y]) => (side === 1 ? [y, -x] : [-y, x]) as Pt);
+  return pts.map((p, i) => {
+    const a = normals[Math.max(0, i - 1)], b = normals[Math.min(normals.length - 1, i)];
+    const k = d / (1 + a[0] * b[0] + a[1] * b[1]);
+    return [p[0] + (a[0] + b[0]) * k, p[1] + (a[1] + b[1]) * k] as Pt;
+  });
+}
+const toD = (pts: Pt[]) => 'M' + pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join(' L');
+const left: Pt[] = [[576, 0], [576, 34], [546, 64], [222, 64], [192, 94], [192, 120]];
+const right: Pt[] = [[624, 0], [624, 34], [654, 64], [978, 64], [1008, 94], [1008, 120]];
+const lines = [
+  { d: toD(left), c: 'n' },
+  { d: toD(offset(left, 8, 1)), c: 'n' },
+  { d: 'M592 0 L592 120', c: 'n' },
+  { d: 'M600 0 L600 120', c: 'r' },
+  { d: 'M608 0 L608 120', c: 'n' },
+  { d: toD(offset(right, 8, -1)), c: 'n' },
+  { d: toD(right), c: 'n' },
+];
+---
+<section class="section section--tight router" aria-labelledby="router-title" style="padding-top: clamp(32px, 4vw, 48px)">
+  <div class="wrap">
+    <div class="section-head" style="margin-bottom: 8px">
+      <h2 id="router-title">Find your lane</h2>
+      <p>One company, three ways in. Pick the one that sounds like you.</p>
+    </div>
+    <svg class="router__svg" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      {lines.map((l) => <path class={l.c} d={l.d} />)}
+    </svg>
+    <ul class="paths">
+      {paths.map((p, i) => (
+        <li class={i === 0 ? 'path path--main' : 'path'}>
+          <Photo name={p.photo} alt="" widths={[480, 640, 800]} sizes="(min-width: 900px) 400px, calc(100vw - 60px)" />
+          <div class="path__body">
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+            <a class={i === 0 ? 'btn' : 'btn btn--line'} href={p.external ? p.href : url(p.href)} target={p.external ? '_blank' : undefined} rel={p.external ? 'noopener' : undefined}>
+              {p.cta}{p.external && <Icon name="external" />}
+            </a>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

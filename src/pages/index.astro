@@ -1,0 +1,116 @@
+---
+// Home: one clear photo beside a readable headline, then the logo's lanes split into the three audiences.
+// Every "Apply" goes to Tenstreet. No test data, no repeated blocks, numbers from one place.
+import Base from '../layouts/Base.astro';
+import Router from '../components/Router.astro';
+import Icon from '../components/Icon.astro';
+import ReviewCard from '../components/ReviewCard.astro';
+import Stars from '../components/Stars.astro';
+import CtaBand from '../components/CtaBand.astro';
+import ContactBlock from '../components/ContactBlock.astro';
+import { company, hoursText, links, stats, reasons, pillars } from '../data/site';
+import { partners } from '../data/partners';
+import { reviews, ratingAverage, reviewCount } from '../data/reviews';
+import { url } from '../lib/url';
+
+const heroSrcset = [480, 720, 960, 1280].map((w) => `${url(`photos/hero-${w}.webp`)} ${w}w`).join(', ');
+const heroSizes = '(min-width: 1240px) 540px, (min-width: 900px) 44vw, calc(100vw - 32px)';
+const featured = ['Diego Ramirez', 'Anthony Caruso', 'Linda Patel'].map((n) => reviews.find((r) => r.name === n)!).filter(Boolean);
+const logoPreview = partners.filter((p) => p.logo).slice(0, 12);
+---
+<Base
+  title={`${company.legalName} | Where drivers come first`}
+  description="CDL driver jobs, owner-operator programs and fleet partnerships across 48 states. Apply on Tenstreet or call (636) 442-1334."
+  current="home"
+  preload={[{ srcset: heroSrcset, sizes: heroSizes, media: '(min-width: 900px)' }]}
+>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      <div class="hero__grid">
+        <div class="hero__copy">
+          <h1 id="hero-title">Where drivers <span>come first.</span></h1>
+          <p class="lead">GFS Group connects CDL drivers, owner-operators and fleet partners with steady freight across 48 states, and backs every mile with a team that answers 24/7.</p>
+          <div class="btn-row">
+            <a class="btn btn--lg" href={links.apply} target="_blank" rel="noopener">Apply on Tenstreet <Icon name="external" /></a>
+            <a class="btn btn--line btn--lg" href={company.phoneHref}><Icon name="phone" />{company.phone}</a>
+          </div>
+          <p class="hero__note"><Icon name="clock" />Recruiters on the line {hoursText}.</p>
+        </div>
+        <figure class="hero__photo">
+          <img src={url('photos/hero-720.webp')} srcset={heroSrcset} sizes={heroSizes} width="1280" height="1024" alt="A white tractor-trailer on an open interstate under a blue sky" fetchpriority="high" decoding="async" />
+        </figure>
+      </div>
+      <div class="lanes" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <Router />
+
+  <section class="section section--tight" aria-label="GFS Group in numbers">
+    <div class="wrap">
+      <ul class="stats">
+        {stats.map((s) => <li><strong>{s.value}</strong><span>{s.label}</span><small>{s.note}</small></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--grey" aria-labelledby="reasons-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="reasons-title">We deliver more than just freight</h2>
+        <p>Trust, speed and support built around the person behind the wheel.</p>
+      </div>
+      <ul class="features features--2">
+        {reasons.map((r) => <li class="feature"><span class="icon-box"><Icon name={r.icon} /></span><h3>{r.title}</h3><p>{r.body}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--dark on-dark" aria-labelledby="pillars-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="pillars-title">Built on compliance, protection and reliability</h2>
+        <p>Every load is backed by the same three commitments.</p>
+      </div>
+      <ul class="features features--3">
+        {pillars.map((p) => <li class="feature"><span class="icon-box"><Icon name={p.icon} /></span><h3>{p.title}</h3><p>{p.body}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="partners-title">
+    <div class="wrap">
+      <div class="section-head section-head--split">
+        <div>
+          <h2 id="partners-title">Freight from names you know</h2>
+          <p>Brokers and carriers in our network keep our drivers loaded on good lanes.</p>
+        </div>
+        <a class="text-link" href={url('partners/')}>See all {partners.length} partners <Icon name="chevron" /></a>
+      </div>
+      <ul class="logo-wall">
+        {logoPreview.map((p) => <li><img src={url(`partners/${p.logo}.webp`)} width="320" height="120" alt={p.name} loading="lazy" decoding="async" /></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--grey" aria-labelledby="reviews-title">
+    <div class="wrap">
+      <div class="section-head section-head--split">
+        <div>
+          <h2 id="reviews-title">Heard from the road</h2>
+          <p style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><Stars rating={ratingAverage} /> {ratingAverage.toFixed(1)} out of 5 from {reviewCount} reviews</p>
+        </div>
+        <a class="text-link" href={url('reviews/')}>Read all {reviewCount} reviews <Icon name="chevron" /></a>
+      </div>
+      <ul class="reviews">
+        {featured.map((r) => <ReviewCard review={r} />)}
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand />
+
+  <section class="section" id="contact" aria-label="Contact">
+    <ContactBlock />
+  </section>
+</Base>
